@@ -23,5 +23,9 @@ override.tf.json
 .terraformrc
 terraform.rc
 
+# AWS credentials
+*.pem
+*.key
+
 # Ignore lock file (optional - some prefer to commit it)
 # .terraform.lock.hcl

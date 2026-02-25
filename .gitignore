@@ -29,3 +29,5 @@ terraform.rc
 
 # Ignore lock file (optional - some prefer to commit it)
 # .terraform.lock.hcl
+
+# ssh -i terraform-key.pem ec2-user@100.31.241.95

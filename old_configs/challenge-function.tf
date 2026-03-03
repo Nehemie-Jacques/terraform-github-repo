@@ -31,3 +31,4 @@ resource "aws_instance" "app-dev" {
      CreationDate = formatdate("DD MMM YYYY hh:mm ZZZ",timestamp())
    }
 }
+

@@ -6,8 +6,9 @@ data "aws_ec2_instance_type" "myinstance" {
 output "instance_type" {
   value = data.aws_ec2_instance_type.myinstance.instance_type
 }
-
+ 
 resource "aws_instance" "myec2" { 
+
   ami = "ami-0f34c5ae932e6f0e4"
   instance_type = data.aws_ec2_instance_type.myinstance.instance_type
 
@@ -23,5 +24,4 @@ resource "aws_instance" "myec2" {
         error_message = "The instance type does not match the expected value."
     }
   }
-}
 }

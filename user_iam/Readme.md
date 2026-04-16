@@ -9,13 +9,9 @@ Ce module Terraform crée un utilisateur IAM respectant le principe du **moindre
 3. **Contrôle du budget** : Alertes automatiques définies à 50%, 80% et 100% de la limite du budget S3, avec envoi sur l'e-mail de l'utilisateur.
 4. **Permissions restreintes S3** : Seules les actions indispensables sur S3 sont accordées (CreateBucket, ListBucket, PutObject, DeleteObject, etc.).
 
-## Limitation AWS (Nombre de Buckets S3)
+## Limitation AWS
 
-**Remarque Importante**: AWS IAM **ne permet pas** de restreindre par contrat (policy) le nombre exact de ressources qu'un utilisateur peut créer (ex: *limite de 5 buckets stricte*). 
-
-Pour se rapprocher de cette exigence, Terraform applique une règle sur les permissions de gestion (List/Put/Delete) : *l'utilisateur ne peut agir que sur les buckets qui commencent par son nom (`s3-manager-user-*`).* 
-
-Pour imposer cette restriction stricte de "**5 buckets maximum**", vous devez utiliser des **AWS Service Quotas** limitant le nombre total de buckets par compte (mais ce ne sera pas spécifique à l'utilisateur) **ou** déployer une routine surveillant via CloudTrail/Lambda les actions de l'utilisateur pour bloquer après le 5ème bucket. 
+L'utilisateur ne peut agir que sur les buckets qui commencent par son nom (`s3-manager-user-*`).
 
 ## Configuration et Déploiement
 

@@ -24,7 +24,8 @@ data "aws_iam_policy_document" "force_mfa" {
     effect = "Allow"
     actions = [
       "iam:GetAccountPasswordPolicy",
-      "iam:ListVirtualMFADevices"
+      "iam:ListVirtualMFADevices",
+      "iam:ListUsers"
     ]
     resources = ["*"]
   }
@@ -34,7 +35,10 @@ data "aws_iam_policy_document" "force_mfa" {
     effect = "Allow"
     actions = [
       "iam:ChangePassword",
-      "iam:GetUser"
+      "iam:GetUser",
+      "iam:CreateLoginProfile",
+      "iam:UpdateLoginProfile",
+      "iam:DeleteLoginProfile"
     ]
     resources = ["arn:aws:iam::*:user/$${aws:username}"]
   }
@@ -60,12 +64,14 @@ data "aws_iam_policy_document" "force_mfa" {
     effect = "Deny"
     not_actions = [
       "iam:CreateVirtualMFADevice",
+      "iam:DeleteVirtualMFADevice",
       "iam:EnableMFADevice",
       "iam:GetUser",
       "iam:ListVirtualMFADevices",
       "iam:ResyncMFADevice",
       "iam:ChangePassword",
-      "iam:GetAccountPasswordPolicy"
+      "iam:GetAccountPasswordPolicy",
+      "iam:ListUsers"
     ]
     resources = ["*"]
 

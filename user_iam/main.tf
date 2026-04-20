@@ -16,20 +16,22 @@ resource "aws_iam_user_login_profile" "s3_user_profile" {
   password_reset_required = true
 }
 
-# ----- IAM Policy : Force MFA & Self Management -----
+# ----- IAM Policy : Self Management (MFA & Password) -----
 data "aws_iam_policy_document" "force_mfa" {
-  # Autorise l'utilisateur à configurer son propre MFA
+  # Autorise l'utilisateur à voir les informations de base et lister les MFA
   statement {
     sid    = "AllowViewAccountInfo"
     effect = "Allow"
     actions = [
       "iam:GetAccountPasswordPolicy",
+      "iam:GetAccountSummary",
       "iam:ListVirtualMFADevices",
       "iam:ListUsers"
     ]
     resources = ["*"]
   }
 
+  # Autorise l'utilisateur à gérer son profil de connexion
   statement {
     sid    = "AllowManageOwnPasswords"
     effect = "Allow"
@@ -43,6 +45,7 @@ data "aws_iam_policy_document" "force_mfa" {
     resources = ["arn:aws:iam::*:user/$${aws:username}"]
   }
 
+  # Autorise l'utilisateur à configurer et activer son MFA (rendre facultatif S3 sans bloquer)
   statement {
     sid    = "AllowManageOwnMFA"
     effect = "Allow"
@@ -50,7 +53,8 @@ data "aws_iam_policy_document" "force_mfa" {
       "iam:CreateVirtualMFADevice",
       "iam:DeleteVirtualMFADevice",
       "iam:EnableMFADevice",
-      "iam:ResyncMFADevice"
+      "iam:ResyncMFADevice",
+      "iam:ListMFADevices"
     ]
     resources = [
       "arn:aws:iam::*:mfa/$${aws:username}",
@@ -58,29 +62,8 @@ data "aws_iam_policy_document" "force_mfa" {
     ]
   }
 
-  # Bloque tout accès aux autres services si MFA n'est pas actif
-  statement {
-    sid    = "DenyAllExceptMFAManagement"
-    effect = "Deny"
-    not_actions = [
-      "iam:CreateVirtualMFADevice",
-      "iam:DeleteVirtualMFADevice",
-      "iam:EnableMFADevice",
-      "iam:GetUser",
-      "iam:ListVirtualMFADevices",
-      "iam:ResyncMFADevice",
-      "iam:ChangePassword",
-      "iam:GetAccountPasswordPolicy",
-      "iam:ListUsers"
-    ]
-    resources = ["*"]
-
-    condition {
-      test     = "BoolIfExists"
-      variable = "aws:MultiFactorAuthPresent"
-      values   = ["false"]
-    }
-  }
+  # Note : Nous avons retiré la politique de "Deny" globale. L'utilisateur peut 
+  # manipuler S3 sans MFA ou activer son MFA plus tard.
 }
 
 # ----- IAM Policy : S3 Restricted (Moindre Privilège) -----

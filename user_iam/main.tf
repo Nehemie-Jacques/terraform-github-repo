@@ -66,21 +66,22 @@ data "aws_iam_policy_document" "force_mfa" {
   # manipuler S3 sans MFA ou activer son MFA plus tard.
 }
 
-# ----- IAM Policy : S3 Restricted (Moindre Privilège) -----
+# ----- IAM Policy : S3 Full Access (avec restriction de région pour création) -----
 data "aws_iam_policy_document" "s3_restricted" {
 
-  # Autorise la liste des buckets, mais nécessite MFA
+  # Accès à la console et liste
   statement {
     sid    = "AllowListAllBuckets"
     effect = "Allow"
     actions = [
       "s3:ListAllMyBuckets",
-      "s3:GetAccountPublicAccessBlock"
+      "s3:GetAccountPublicAccessBlock",
+      "s3:GetBucketPublicAccessBlock"
     ]
     resources = ["*"]
   }
 
-  # Autorise la création de bucket mais SEULEMENT sur la région eu-west-3
+  # Autorise la création de bucket mais SEULEMENT sur eu-west-3
   statement {
     sid    = "AllowCreateBucketInRegion"
     effect = "Allow"
@@ -96,32 +97,18 @@ data "aws_iam_policy_document" "s3_restricted" {
     }
   }
 
-  # Autorise la gestion de bucket et objets seulement sur les buckets qui portent l'identifiant du user dans le nom
+  # Autorise TOUTES les autres actions (versioning, policy, cross-origin, objects...) sur TOUS les buckets
   statement {
-    sid    = "AllowManageOwnBuckets"
+    sid    = "AllowS3FullAccess"
     effect = "Allow"
-    actions = [
-      "s3:DeleteBucket",
-      "s3:ListBucket",
-      "s3:GetBucketLocation",
-      "s3:GetBucketAcl",
-      "s3:PutBucketAcl",
-      "s3:GetBucketPublicAccessBlock",
-      "s3:PutBucketPublicAccessBlock",
-      # Pour les objets
-      "s3:PutObject",
-      "s3:GetObject",
-      "s3:DeleteObject"
+    not_actions = [
+      "s3:CreateBucket"
     ]
     resources = [
-      "arn:aws:s3:::${var.user_name}-*",
-      "arn:aws:s3:::${var.user_name}-*/*"
+      "arn:aws:s3:::*",
+      "arn:aws:s3:::*/*"
     ]
   }
-
-  # Note d'architecture : AWS IAM ne permet PAS de limiter le NOMBRE de buckets.
-  # La convention adoptée ici est de les obliger à préfixer le bucket avec leur nom et
-  # nous suggérons un audit externe (via Config/Lambda).
 }
 
 # ----- Attach Policies -----

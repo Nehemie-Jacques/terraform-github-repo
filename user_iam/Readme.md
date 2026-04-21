@@ -1,17 +1,13 @@
-# Création d'un User S3 avec Privilèges Restreints et MFA Obligatoire
+# Création d'un User S3 avec Privilèges de Gestion Avancée et MFA Facultatif
 
-Ce module Terraform crée un utilisateur IAM respectant le principe du **moindre privilège**, limité uniquement à des opérations nécessaires sur S3. 
+Ce module Terraform crée un utilisateur IAM disposant d'un **Accès S3 complet**, tout en restreignant strictement l'emplacement (Region) de création des nouveaux compartiments.
 
 ## Fonctionnalités incluses
 
 1. **Self-Service et MFA Facultatif** : L'utilisateur dispose des droits nécessaires pour naviguer dans son compte (dashboard de sécurité, gestion de mot de passe) et **pour activer ou gérer son token MFA localement**. Bien que recommandé, il n'est plus bloquant pour les tâches principales S3.
-2. **Restriction de région S3** : L'utilisateur ne peut créer de bucket que dans la région `eu-west-3`.
-3. **Contrôle du budget** : Alertes automatiques définies à 50%, 80% et 100% de la limite du budget S3, avec envoi sur l'e-mail de l'utilisateur.
-4. **Permissions restreintes S3** : Seules les actions indispensables sur S3 sont accordées (CreateBucket, ListBucket, PutObject, DeleteObject, etc.).
-
-## Limitation AWS
-
-L'utilisateur ne peut agir que sur les buckets qui commencent par son nom (`s3-manager-user-*`).
+2. **Restriction de région S3** : La création de NOUVEAUX compartiments (`CreateBucket`) est restreinte à la région `eu-west-3`. Toute tentative de création sur une autre région sera bloquée par AWS IAM.
+3. **Accès Complet S3 (Full Access)** : À l'exception de la contrainte régionale sur la création (`CreateBucket`), l'utilisateur bénéficie d'un accès total, permettant l'activation du versioning, gestion des statiques, édition des policies de buckets, et gestion totale des objets sur tous les compartiments (Read, Write, Delete).
+4. **Contrôle du budget** : Alertes automatiques définies à 50%, 80% et 100% de la limite du budget S3, avec notification par e-mail automatique à l'utilisateur.
 
 ## Configuration et Déploiement
 

@@ -4,7 +4,7 @@ Ce module Terraform crée un utilisateur IAM disposant d'un **Accès S3 complet*
 
 ## Fonctionnalités incluses
 
-1. **Self-Service et MFA Facultatif** : L'utilisateur dispose des droits nécessaires pour naviguer dans son compte (dashboard de sécurité, gestion de mot de passe) et **pour activer ou gérer son token MFA localement**. Bien que recommandé, il n'est plus bloquant pour les tâches principales S3.
+1. **Self-Service, Clés d'Accès et MFA Facultatif** : L'utilisateur dispose des droits nécessaires pour naviguer dans son compte (dashboard de sécurité, gestion de mot de passe), **créer/gérer ses propres Access Keys / Secret Keys** (pour accès programmatique), et **activer ou gérer son token MFA localement**. Bien que recommandé, le MFA n'est plus bloquant pour les tâches principales S3.
 2. **Restriction de région S3** : La création de NOUVEAUX compartiments (`CreateBucket`) est restreinte à la région `eu-west-3`. Toute tentative de création sur une autre région sera bloquée par AWS IAM.
 3. **Accès Complet S3 (Full Access)** : À l'exception de la contrainte régionale sur la création (`CreateBucket`), l'utilisateur bénéficie d'un accès total, permettant l'activation du versioning, gestion des statiques, édition des policies de buckets, et gestion totale des objets sur tous les compartiments (Read, Write, Delete).
 4. **Contrôle du budget** : Alertes automatiques définies à 50%, 80% et 100% de la limite du budget S3, avec notification par e-mail automatique à l'utilisateur.

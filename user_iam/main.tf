@@ -31,16 +31,20 @@ data "aws_iam_policy_document" "force_mfa" {
     resources = ["*"]
   }
 
-  # Autorise l'utilisateur à gérer son profil de connexion
+  # Autorise l'utilisateur à gérer son profil de connexion et ses clés d'accès
   statement {
-    sid    = "AllowManageOwnPasswords"
+    sid    = "AllowManageOwnCredentials"
     effect = "Allow"
     actions = [
       "iam:ChangePassword",
       "iam:GetUser",
       "iam:CreateLoginProfile",
       "iam:UpdateLoginProfile",
-      "iam:DeleteLoginProfile"
+      "iam:DeleteLoginProfile",
+      "iam:CreateAccessKey",
+      "iam:DeleteAccessKey",
+      "iam:ListAccessKeys",
+      "iam:UpdateAccessKey"
     ]
     resources = ["arn:aws:iam::*:user/$${aws:username}"]
   }
